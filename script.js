@@ -80,9 +80,14 @@ function playSortedSound(){
     playSound(600, 150, 'sine');
 }
 
+function getDelay(){
+    let slider = document.getElementById('speed-slider');
+    let sliderValue = slider.value;
+    return (101 - sliderValue) * 30;
+}
+
 async function bubbleSort(){
 
-    let delay = 100;
     let n = array.length;
 
     for (let i = 0; i< n-1; i++){
@@ -92,7 +97,7 @@ async function bubbleSort(){
             colorBar(j,COLOR_COMPARING);
             colorBar(j+1,COLOR_COMPARING);
 
-            await sleep(delay);
+            await sleep(getDelay());
 
             if (array[j] > array[j+1]){
                 colorBar(j, COLOR_SWAPPING);
@@ -105,7 +110,7 @@ async function bubbleSort(){
                 array[j+1] = temp;
 
                 updateBarHeights(array);
-                await sleep(delay);
+                await sleep(getDelay());
             }
 
             colorBar(j,COLOR_DEFAULT);

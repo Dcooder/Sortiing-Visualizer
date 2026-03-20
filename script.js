@@ -125,7 +125,74 @@ async function bubbleSort(){
     playSortedSound();
 }
 
+async function merge(left,mid,right){
+    let leftArr = array.slice(left,mid+1);
+    let rightArr = array.slice(mid+1,right+1);
+
+    let i = 0; //tracks position in leftArr
+    let j = 0; //tracks position in rightArr
+    let k = left;
+
+    while(i < leftArr.length && j < rightArr.length){
+
+        colorBar(left + i, COLOR_COMPARING);
+        colorBar(mid + 1 + j, COLOR_COMPARING);
+        await sleep(getDelay());
+
+        if (leftArr[i] <= rightArr[j]){
+            array[k] = leftArr[i];
+            i++;
+        }else{
+            array[k] = rightArr[j];
+            j++;
+        }
+
+        updateBarHeights(array);
+
+        colorBar(k,COLOR_DEFAULT);
+        k++;
+    }
+
+    while( i < leftArr.length){
+        array[k] = leftArr[i];
+        updateBarHeights(array);
+        colorBar(k,COLOR_DEFAULT);
+        i++;
+        k++;
+        await sleep(getDelay());
+    }
+
+    while( j < rightArr.length){
+        array[k] = rightArr[j];
+        updateBarHeights(array);
+        colorBar(k,COLOR_DEFAULT);
+        j++;
+        k++;
+        await sleep(getDelay());
+    }
+
+    for (let x = left; x <= right; x++){
+        colorBar(x,COLOR_SORTED);
+        playSortedSound();
+        await sleep(getDelay() / 3);
+    }
+}
+
+async function mergesort(left,right){
+    if (left >= right){
+        return;
+    }
+
+    let mid = Math.floor((left + right) / 2);
+
+    await mergesort(left,mid);
+    await mergesort(mid+1,right);
+    await merge(left,mid,right);
+}
+
 document.getElementById('btn-generate').addEventListener('click',generateArray);
 document.getElementById('btn-bubble').addEventListener('click', bubbleSort);
+document.getElementById('btn-merge').addEventListener('click', function() {mergesort(0,array.length -1);
+});
 
 generateArray();

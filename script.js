@@ -190,9 +190,66 @@ async function mergesort(left,right){
     await merge(left,mid,right);
 }
 
+//this function partitions the array around a pivot
+async function partition(left,right){
+    let pivot = array[right];
+    colorBar(right,COLOR_SWAPPING);
+
+    let i = left - 1;
+
+    for (let j = 0; j < right; j++){
+        colorBar(j,COLOR_COMPARING);
+        await sleep(getDelay());
+
+        if (array[j] < pivot){
+            i++;
+
+            //swapping
+            let temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+
+            playSwapSound();
+            updateBarHeights(array);
+            await sleep(getDelay());
+        }
+
+        colorBar(j,COLOR_DEFAULT);
+    }
+
+    i++;
+    let temp = array[i];
+    array[i] = array[right];
+    array[right] = temp;
+
+    updateBarHeights(array);
+
+    sortedIndices.push(i);
+    colorBar(i,COLOR_SORTED);
+    playSortedSound();
+    await sleep(getDelay());
+
+    return i;
+}
+
+// This function recursively sorts using partition
+async function quickSort(left, right) {
+
+  if (left >= right) {
+    return;
+  }
+
+  let pivotIndex = await partition(left, right);
+  await quickSort(left, pivotIndex - 1);
+  await quickSort(pivotIndex + 1, right);
+}
+
 document.getElementById('btn-generate').addEventListener('click',generateArray);
 document.getElementById('btn-bubble').addEventListener('click', bubbleSort);
 document.getElementById('btn-merge').addEventListener('click', function() {mergesort(0,array.length -1);
 });
+document.getElementById('btn-quick').addEventListener('click',function() {
+    quickSort(0,array.length - 1);
+})
 
 generateArray();
